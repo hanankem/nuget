@@ -1,21 +1,5 @@
 # ASP.NET
-- task: ArtifactoryNuGet@2
-  inputs:
-    command: 'restore'
-    artifactoryService: 'ArtifactoryBot'
-    targetResolveRepo: 'nuget'
-    solutionPath: '**/*.sln'
-    - task: NuGetCommand@2
-      inputs:
-        command: 'pack'
-        packagesToPack: '**/*.csproj'
-        versioningScheme: 'off'
-        - task: ArtifactoryNuGet@2
-          inputs:
-            command: 'push'
-            artifactoryService: 'ArtifactoryBot'
-            targetDeployRepo: 'nuget'
-            pathToNupkg: '*.nupkg'
+
 # Build and test ASP.NET projects.
 # Add steps that publish symbols, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
@@ -32,20 +16,9 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- task: NuGetToolInstaller@1
-
-- task: NuGetCommand@2
+- task: ArtifactoryNuGet@2
   inputs:
-    restoreSolution: '$(solution)'
-
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    command: 'restore'
+    artifactoryService: 'ArtifactoryBot'
+    targetResolveRepo: 'nuget'
+    solutionPath: '**/*.sln'
